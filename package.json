@@ -1,0 +1,28 @@
+{
+  "name": "Backbone.LeakChecker",
+  "version": "0.1.0",
+  "author": {
+    "name": "Aaron Qian",
+    "email": "aq1018@gmail.com",
+    "url": "http://aq1018.github.io/"
+  },
+  "description": "Report leaky views in browser console.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aq1018/Backbone.LeakChecker.git"
+  },
+  "peerDependencies": {
+    "backbone": "*",
+    "underscore": "*"
+  },
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "grunt": "^0.4.5",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-uglify": "^0.4.0",
+    "jshint-stylish": "^0.2.0",
+    "load-grunt-tasks": "^0.4.0",
+    "mocha": "^1.18.2",
+    "time-grunt": "^0.3.1"
+  }
+}
