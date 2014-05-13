@@ -1,4 +1,4 @@
-/*globals define, require, module, console*/
+/*globals define */
 
 (function (root, factory) {
   'use strict';
