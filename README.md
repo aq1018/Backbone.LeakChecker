@@ -23,7 +23,7 @@ bower install backbone.leakchecker --save
 Insert the following to the `dependencies` section of your `component.json`
 
 ```
-"aq1018/backbone.leakchecker": ">= 0.0.1"
+"aq1018/backbone.leakchecker": ">= 0.1.2"
 ```
 
 ## Usage

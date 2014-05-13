@@ -1,6 +1,6 @@
 {
   "name"          : "backbone.leakchecker",
-  "version"       : "0.1.1",
+  "version"       : "0.1.2",
   "description"   : "Report leaky views in browser console.",
   "keywords"      : ["backbone", "leak"],
   "repo"          : "aq1018/Backbone.LeakChecker",
