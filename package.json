@@ -11,10 +11,12 @@
     "type": "git",
     "url": "https://github.com/aq1018/Backbone.LeakChecker.git"
   },
+  "dependencies": {
+    "jquery": ">= 1.9.0",
+    "underscore": "*"
+  },
   "peerDependencies": {
-    "backbone": "*",
-    "underscore": "*",
-    "jquery": ">= 1.9.0"
+    "backbone": "*"
   },
   "devDependencies": {
     "chai": "^1.9.1",

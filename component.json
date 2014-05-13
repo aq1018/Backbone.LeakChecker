@@ -1,0 +1,15 @@
+{
+  "name"          : "backbone.leakchecker",
+  "version"       : "0.1.0",
+  "description"   : "Report leaky views in browser console.",
+  "keywords"      : ["backbone", "leak"],
+  "repo"          : "aq1018/Backbone.LeakChecker",
+  "dependencies"  : {
+    "component/jquery": ">= 1.9.0",
+    "jashkenas/underscore"  : "*",
+    "jashkenas/backbone": "*"
+  },
+  "main"          : "Backbone.LeakChecker.min.js",
+  "scripts"       : ["Backbone.LeakChecker.min.js"],
+  "license"       : "MIT"
+}
