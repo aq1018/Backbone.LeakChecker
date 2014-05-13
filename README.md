@@ -66,18 +66,18 @@ module.exports = new App();
 
 ```html
 <!-- dependencies -->
-<script type="text/javascript" src="jquery.js" />
-<script type="text/javascript" src="underscore.js" />
-<script type="text/javascript" src="backbone.js" />
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="underscore.js"></script>
+<script type="text/javascript" src="backbone.js"></script>
 
 <!-- this lib -->
-<script type="text/javascript" src="backbone.leakchecker.js" />
+<script type="text/javascript" src="backbone.leakchecker.js"></script>
 
-<script>
+<script type="text/javascript">
   // do this first
   initLeakChecker();
 </script>
 
 <!-- include your app here -->
-<script type="text/javascript" src="app.js" />
+<script type="text/javascript" src="app.js"></script>
 ```
