@@ -27,7 +27,7 @@
 
   LeakChecker.DEFAULT_OPTIONS = {
     interval: 5000,
-    gc: false,
+    performGC: false,
     logger: console
   };
 
@@ -44,7 +44,7 @@
 
     sanitizeOptions: function(options) {
       var defaultOptions = LeakChecker.DEFAULT_OPTIONS;
-      options = _.pick(options || {}, 'interval', 'gc');
+      options = _.pick(options || {}, 'interval', 'performGC', 'logger');
       return _.extend({}, defaultOptions, options);
     },
 
@@ -58,7 +58,7 @@
 
     register: function(view) {
       if (this.views[view.cid]) {
-        this.logger.error('View' + view.cid + 'is already registerd!');
+        this.logger.error('View' + view.cid + 'is already registered!');
         return;
       }
 
@@ -67,7 +67,7 @@
 
     unregister: function(view) {
       if (!this.views[view.cid]) {
-        this.logger.error('View' + view.cid + 'is not registerd!');
+        this.logger.error('View' + view.cid + 'is not registered!');
         return;
       }
 
@@ -80,7 +80,7 @@
         view.__warnIfLeaky();
       });
 
-      if (this.gc) {
+      if (this.performGC) {
         this.gc();
       }
     },
@@ -157,17 +157,17 @@
     };
 
     Backbone.View.prototype.__isLeaky = function() {
-      // gc'ed already
+      // GC'ed already
       if(this.__gced) {
         return false;
       }
 
-      // not gc'ed, but still attached to dom
+      // not GC'ed, but still attached to DOM
       if (this.__isOnScreen()) {
         return false;
       }
 
-      // not gc'ed and not on dom
+      // not GC'ed and not on DOM
       // we think this might be a leaky view
       return true;
     };
