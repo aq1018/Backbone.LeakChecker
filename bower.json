@@ -1,5 +1,5 @@
 {
-  "name": "Backbone.LeakChecker",
+  "name": "backbone.leakchecker",
   "version": "0.1.0",
   "main": ["Backbone.LeakChecker.min.js"],
   "ignore": [
