@@ -1,154 +1,179 @@
-'use strict';
+/*globals define, require, module, console*/
 
-var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('backbone');
+(function (root, factory) {
+  'use strict';
 
-function LeakChecker(options) {
-  this.initialize(options);
-}
-
-LeakChecker.DEFAULT_OPTIONS = {
-  interval: 5000,
-  gc: false
-};
-
-_.extend(LeakChecker.prototype, {
-
-  constructor: LeakChecker,
-
-  initialize: function(options) {
-    _.extend(this, this.sanitizeOptions(options));
-    this.interval = 5000;
-    this.clear();
-    console.warn('**** LeakyRegistery - Your best pal for backbone view memory leak detection. ****');
-  },
-
-  sanitizeOptions: function(options) {
-    var defaultOptions = LeakChecker.DEFAULT_OPTIONS;
-    options = _.pick(options || {}, 'interval', 'gc');
-    return _.extend({}, defaultOptions, options);
-  },
-
-  start: function() {
-    this._handle = setInterval(this.reportLeaks.bind(this), this.interval);
-  },
-
-  get: function(cid) {
-    return this.views[cid];
-  },
-
-  register: function(view) {
-    if (this.views[view.cid]) {
-      console.error('View' + view.cid + 'is already registerd!');
-      return;
-    }
-
-    this.views[view.cid] = view;
-  },
-
-  unregister: function(view) {
-    if (!this.views[view.cid]) {
-      console.error('View' + view.cid + 'is not registerd!');
-      return;
-    }
-
-    delete this.views[view.cid];
-  },
-
-  reportLeaks: function() {
-    console.log('checking leaky views');
-    _.each(this.views, function(view) {
-      view.__warnIfLeaky();
+  if (typeof exports === 'object') {
+    // CommonJS
+    var $ = require('jquery');
+    var _ = require('underscore');
+    var Backbone = require('backbone');
+    module.exports = factory($, _, Backbone);
+  } else if (typeof define === 'function' && define.amd) {
+    // AMD
+    define(['jquery', 'underscore', 'backbone'], function ($, _, Backbone) {
+      return (root.returnExportsGlobal = factory($, _, Backbone));
     });
-
-    if (this.gc) {
-      this.gc();
-    }
-  },
-
-  clear: function() {
-    this.views = {};
-  },
-
-  stop: function() {
-    clearInterval(this._handle);
-  },
-
-  gc: function() {
-    _.each(this.views, function(view) {
-      if (view.__isLeaky()) {
-        view.remove();
-      }
-    });
-  },
-
-  dispose: function() {
-    this.stop();
-    this.clear();
+  } else {
+    // Global Variables
+    root.initLeakChecker = factory(root.$, root._, root.Backbone);
   }
-});
+}(this, function ($, _, Backbone) {
+  'use strict';
 
-function intercept(fn, after) {
-  return function() {
-    var val = fn.apply(this, arguments);
-    after.apply(this);
-    return val;
-  };
-}
+  function LeakChecker(options) {
+    this.initialize(options);
+  }
 
-function init(options) {
-  var leakChecker = new LeakChecker(options);
-
-  // instrument Backbone.View#_configure
-  // since we cannot override the constructor itself
-  // the #_configure method invoked by the constructor is our next best choice
-  Backbone.View.prototype._configure = intercept(
-    Backbone.View.prototype._configure,
-    function() {
-      leakChecker.register(this);
-    }
-  );
-
-  Backbone.View.prototype.remove = intercept(
-    Backbone.View.prototype.remove,
-    function() {
-      this.__gced = true;
-      console.trace('[' + this.cid + '] removed.', this);
-      leakChecker.unregister(this);
-    });
-
-  Backbone.View.prototype.__warnIfLeaky = function() {
-    if (this.__isLeaky()) {
-      console.warn('[' + this.cid + '] is leaky.', this.el, this);
-    }
-
-    if(this.__isOnScreen()) {
-      console.debug('[' + this.cid + '] still on screen.', this.el, this);
-    }
+  LeakChecker.DEFAULT_OPTIONS = {
+    interval: 5000,
+    gc: false,
+    logger: console
   };
 
-  Backbone.View.prototype.__isOnScreen = function() {
-    return $.contains(document, this.el);
-  };
+  _.extend(LeakChecker.prototype, {
 
-  Backbone.View.prototype.__isLeaky = function() {
-    // gc'ed already
-    if(this.__gced) {
-      return false;
+    constructor: LeakChecker,
+
+    initialize: function(options) {
+      _.extend(this, this.sanitizeOptions(options));
+      this.interval = 5000;
+      this.clear();
+      this.logger.warn('**** LeakyRegistery - Your best pal for backbone view memory leak detection. ****');
+    },
+
+    sanitizeOptions: function(options) {
+      var defaultOptions = LeakChecker.DEFAULT_OPTIONS;
+      options = _.pick(options || {}, 'interval', 'gc');
+      return _.extend({}, defaultOptions, options);
+    },
+
+    start: function() {
+      this._handle = setInterval(this.reportLeaks.bind(this), this.interval);
+    },
+
+    get: function(cid) {
+      return this.views[cid];
+    },
+
+    register: function(view) {
+      if (this.views[view.cid]) {
+        this.logger.error('View' + view.cid + 'is already registerd!');
+        return;
+      }
+
+      this.views[view.cid] = view;
+    },
+
+    unregister: function(view) {
+      if (!this.views[view.cid]) {
+        this.logger.error('View' + view.cid + 'is not registerd!');
+        return;
+      }
+
+      delete this.views[view.cid];
+    },
+
+    reportLeaks: function() {
+      this.logger.log('checking leaky views');
+      _.each(this.views, function(view) {
+        view.__warnIfLeaky();
+      });
+
+      if (this.gc) {
+        this.gc();
+      }
+    },
+
+    clear: function() {
+      this.views = {};
+    },
+
+    stop: function() {
+      clearInterval(this._handle);
+    },
+
+    gc: function() {
+      _.each(this.views, function(view) {
+        if (view.__isLeaky()) {
+          view.remove();
+        }
+      });
+    },
+
+    dispose: function() {
+      this.stop();
+      this.clear();
+    }
+  });
+
+  function intercept(fn, after) {
+    return function() {
+      var val = fn.apply(this, arguments);
+      after.apply(this);
+      return val;
+    };
+  }
+
+  var leakChecker;
+
+  function initLeakChecker(options) {
+    if(leakChecker) {
+      return leakChecker;
     }
 
-    // not gc'ed, but still attached to dom
-    if (this.__isOnScreen()) {
-      return false;
-    }
+    leakChecker = new LeakChecker(options);
 
-    // not gc'ed and not on dom
-    // we think this might be a leaky view
-    return true;
-  };
+    // instrument Backbone.View#_configure
+    // since we cannot override the constructor itself
+    // the #_configure method invoked by the constructor is our next best choice
+    Backbone.View.prototype._configure = intercept(
+      Backbone.View.prototype._configure,
+      function() {
+        leakChecker.register(this);
+      }
+    );
 
-  leakChecker.start();
-}
+    Backbone.View.prototype.remove = intercept(
+      Backbone.View.prototype.remove,
+      function() {
+        this.__gced = true;
+        leakChecker.logger.trace('[' + this.cid + '] removed.', this);
+        leakChecker.unregister(this);
+      });
 
-module.exports = init;
+    Backbone.View.prototype.__warnIfLeaky = function() {
+      if (this.__isLeaky()) {
+        leakChecker.logger.warn('[' + this.cid + '] is leaky.', this.el, this);
+      }
+
+      if(this.__isOnScreen()) {
+        leakChecker.logger.debug('[' + this.cid + '] still on screen.', this.el, this);
+      }
+    };
+
+    Backbone.View.prototype.__isOnScreen = function() {
+      return $.contains(document, this.el);
+    };
+
+    Backbone.View.prototype.__isLeaky = function() {
+      // gc'ed already
+      if(this.__gced) {
+        return false;
+      }
+
+      // not gc'ed, but still attached to dom
+      if (this.__isOnScreen()) {
+        return false;
+      }
+
+      // not gc'ed and not on dom
+      // we think this might be a leaky view
+      return true;
+    };
+
+    leakChecker.start();
+  }
+
+  return initLeakChecker;
+}));
