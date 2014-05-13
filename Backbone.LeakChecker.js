@@ -39,7 +39,7 @@
       _.extend(this, this.sanitizeOptions(options));
       this.interval = 5000;
       this.clear();
-      this.logger.warn('**** LeakyRegistery - Your best pal for backbone view memory leak detection. ****');
+      this.logger.warn('**** Backbone.LeakChecker - Your best pal for backbone view memory leak detection. ****');
     },
 
     sanitizeOptions: function(options) {
