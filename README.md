@@ -62,7 +62,7 @@ function App(){
 module.exports = new App();
 ```
 
-### <script> tag
+### script tag
 
 ```html
 <!-- dependencies -->
