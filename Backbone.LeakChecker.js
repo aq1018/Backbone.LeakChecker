@@ -1,6 +1,6 @@
 /*globals define */
 
-(function (root, factory) {
+(function(root, factory) {
   'use strict';
 
   if (typeof exports === 'object') {
@@ -11,14 +11,14 @@
     module.exports = factory($, _, Backbone);
   } else if (typeof define === 'function' && define.amd) {
     // AMD
-    define(['jquery', 'underscore', 'backbone'], function ($, _, Backbone) {
+    define(['jquery', 'underscore', 'backbone'], function($, _, Backbone) {
       return (root.returnExportsGlobal = factory($, _, Backbone));
     });
   } else {
     // Global Variables
     root.initLeakChecker = factory(root.$, root._, root.Backbone);
   }
-}(this, function ($, _, Backbone) {
+}(this, function($, _, Backbone) {
   'use strict';
 
   function LeakChecker(options) {
@@ -118,7 +118,7 @@
   var leakChecker;
 
   function initLeakChecker(options) {
-    if(leakChecker) {
+    if (leakChecker) {
       return leakChecker;
     }
 
@@ -147,7 +147,7 @@
         leakChecker.logger.warn('[' + this.cid + '] is leaky.', this.el, this);
       }
 
-      if(this.__isOnScreen()) {
+      if (this.__isOnScreen()) {
         leakChecker.logger.debug('[' + this.cid + '] still on screen.', this.el, this);
       }
     };
@@ -158,7 +158,7 @@
 
     Backbone.View.prototype.__isLeaky = function() {
       // GC'ed already
-      if(this.__gced) {
+      if (this.__gced) {
         return false;
       }
 
