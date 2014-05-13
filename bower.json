@@ -3,12 +3,9 @@
   "version": "0.1.0",
   "main": ["Backbone.LeakChecker.min.js"],
   "ignore": [
-    ".jshintrc",
-    ".jsbeautifyrc",
-    ".gitignore",
-    ".jshintrc",
+    ".*",
+    "*.json",
     "Gruntfile.js",
-    "package.json",
     "spec"
   ],
   "dependencies": {
