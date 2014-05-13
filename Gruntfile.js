@@ -25,6 +25,22 @@ module.exports = function(grunt) {
       unit: {
         src: ['spec/unit/*.spec.js']
       }
+    },
+
+    uglify: {
+      lib: {
+        options: {
+          sourceMap: true,
+          sourceMapIncludeSources: true,
+          sourceMapName: 'Backbone.LeakChecker.js.map',
+          compress: {
+            drop_console: false
+          }
+        },
+        files: {
+          'Backbone.LeakChecker.min.js': ['Backbone.LeakChecker.js']
+        }
+      }
     }
   });
 
