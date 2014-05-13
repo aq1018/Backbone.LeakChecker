@@ -1,4 +1,4 @@
-/*globals $*/
+'use strict';
 
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -88,8 +88,6 @@ _.extend(LeakChecker.prototype, {
   }
 });
 
-var leakyRegistry = global.leakyRegistry = window.leakyRegistry = ;
-
 function intercept(fn, after) {
   return function() {
     var val = fn.apply(this, arguments);
@@ -98,7 +96,7 @@ function intercept(fn, after) {
   };
 }
 
-module.exports = function init(options) {
+function init(options) {
   var leakChecker = new LeakChecker(options);
 
   // instrument Backbone.View#_configure
@@ -107,7 +105,7 @@ module.exports = function init(options) {
   Backbone.View.prototype._configure = intercept(
     Backbone.View.prototype._configure,
     function() {
-      leakyRegistry.register(this);
+      leakChecker.register(this);
     }
   );
 
@@ -116,7 +114,7 @@ module.exports = function init(options) {
     function() {
       this.__gced = true;
       console.trace('[' + this.cid + '] removed.', this);
-      leakyRegistry.unregister(this);
+      leakChecker.unregister(this);
     });
 
   Backbone.View.prototype.__warnIfLeaky = function() {
@@ -151,3 +149,5 @@ module.exports = function init(options) {
 
   leakChecker.start();
 }
+
+module.exports = init;
